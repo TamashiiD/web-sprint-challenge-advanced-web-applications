@@ -2,20 +2,26 @@ import React, { useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import PT from 'prop-types'
 import axios from 'axios'
+import { memo } from 'react';
 
-export default function Articles(props) {
-  const {getArticles, setArticles, articles} = props
+function Articles(props) {
+  const {updateArticle, deleteArticle, getArticles, articles} = props
   // ✨ where are my props? Destructure them here
 
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
+  const handleDelete =(id)=>{
+    deleteArticle(id)
+  }
 
+  const handleUpdate = ({article_id, article}) => {
+    updateArticle({article_id, article})
+  }
   useEffect(() => {
-  getArticles()
+  getArticles();
   
     // ✨ grab the articles here, on first render only
   },[])
-
   return (
     // ✨ fix the JSX: replace `Function.prototype` with actual functions
     // and use the articles prop to generate articles
@@ -33,8 +39,8 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={true} onClick={Function.prototype}>Edit</button>
-                  <button disabled={true} onClick={Function.prototype}>Delete</button>
+                  <button disabled={true} onClick={handleUpdate(art.article_id, art.article)}>Edit</button>
+                  <button disabled={true} onClick={handleDelete(art.article_id)}>Delete</button>
                 </div>
               </div>
             )
@@ -57,3 +63,4 @@ Articles.propTypes = {
   setCurrentArticleId: PT.func.isRequired,
   currentArticleId: PT.number, // can be undefined or null
 }
+export default memo(Articles);
