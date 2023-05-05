@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import PT from 'prop-types'
 
 const initialFormValues = {
@@ -7,20 +7,30 @@ const initialFormValues = {
 }
 export default function LoginForm(props) {
   const [values, setValues] = useState(initialFormValues)
-  // ✨ where are my props? Destructure them here
+  const {login} = props
+  // ✨ where are my props? Destructure them here (WHAT PROPS?!)
 
   const onChange = evt => {
     const { id, value } = evt.target
     setValues({ ...values, [id]: value })
+   isDisabled()
   }
 
   const onSubmit = evt => {
+    const username = values.username
+    const password = values.password
     evt.preventDefault()
+    login({username, password})
     // ✨ implement
   }
 
   const isDisabled = () => {
     // ✨ implement
+    if (values.username.trim().length >= 3 && values.password.trim().length >= 8){
+     return false
+    }
+    else return true
+   
     // Trimmed username must be >= 3, and
     // trimmed password must be >= 8 for
     // the button to become enabled
