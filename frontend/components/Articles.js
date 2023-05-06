@@ -1,46 +1,50 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import PT from 'prop-types'
 import axios from 'axios'
 import { memo } from 'react';
 
-function Articles(props) {
-  const {updateArticle, deleteArticle, getArticles, articles} = props
+export default function Articles(props) {
+  const { setCurrentArticleId, updateArticle, deleteArticle, getArticles, articles} = props
   // ✨ where are my props? Destructure them here
 
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
-  const handleDelete =(id)=>{
-    deleteArticle(id)
+  const handleDelete =(article_id)=>{
+    deleteArticle(article_id)
+
   }
 
-  const handleUpdate = ({article_id, article}) => {
-    updateArticle({article_id, article})
+  const handleUpdate = (article_id, art) => {
+    updateArticle(article_id, art)
   }
+
   useEffect(() => {
   getArticles();
-  
+
     // ✨ grab the articles here, on first render only
   },[])
+console.log(articles)
   return (
     // ✨ fix the JSX: replace `Function.prototype` with actual functions
     // and use the articles prop to generate articles
     <div className="articles">
       <h2>Articles</h2>
       {
-        articles.length >= 1
+        articles.length === 0
           ? 'No articles yet'
           : articles.map(art => {
             return (
               <div className="article" key={art.article_id}>
+                
                 <div>
                   <h3>{art.title}</h3>
                   <p>{art.text}</p>
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={true} onClick={handleUpdate(art.article_id, art.article)}>Edit</button>
-                  <button disabled={true} onClick={handleDelete(art.article_id)}>Delete</button>
+                  <button disabled={false} onClick={()=> handleUpdate(art.article_id, art.title, art.text, art.topic)}>Edit</button>
+                  <button disabled={false} onClick={()=>handleDelete(art.article_id)}>Delete</button>
                 </div>
               </div>
             )
@@ -63,4 +67,4 @@ Articles.propTypes = {
   setCurrentArticleId: PT.func.isRequired,
   currentArticleId: PT.number, // can be undefined or null
 }
-export default memo(Articles);
+
