@@ -54,11 +54,11 @@ export default function App() {
         navigate('/articles')
 
       })
-    .catch(err => {
-      setMessage(err.repsonse.data.message);
-      setSpinnerOn(false);
-      redirectToLogin()
-    })
+      .catch(err => {
+        setMessage(err.repsonse.data.message);
+        setSpinnerOn(false);
+        redirectToLogin()
+      })
     // + and launch a request to the proper endpoint.
     // + On success, we should set the token to local storage in a 'token' key,
     // + put the server success message in its proper state, and redirect
@@ -68,13 +68,13 @@ export default function App() {
 
   const getArticles = () => {
     // ✨ implement
-    setMessage("")
+    // setMessage("")
     setSpinnerOn(true)
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
     axiosWithAuth().get('http://localhost:9000/api/articles')
-      .then(res => { 
+      .then(res => {
         setArticles(res.data.articles);
-        setMessage(res.data.message);    
+        setMessage(res.data.message);
         setSpinnerOn(false);
         // console.log("RENDERED")
         // console.log(res.data.articles)
@@ -85,7 +85,7 @@ export default function App() {
         setMessage("Ouch: jwt expired")
         redirectToLogin()
       })
-      
+
 
     // + We should flush the message state, turn on the spinner
     // + and launch an authenticated request to the proper endpoint.
@@ -96,33 +96,40 @@ export default function App() {
     // + Don't forget to turn off the spinner!
   }
 
-  const postArticle = values => {
+  const postArticle = article => {
     // ✨ implementconst 
-    const token = localStorage.getItem("token");
-    axios.create({ headers: { authorization: token } })
-    .post('http://localhost:9000/api/articles',{"title": values.title ,"text": values.text, "topic": values.topic } )
-    .then(res => {
-      console.log(articles)
-      console.log(res.data)
-      setArticles([...articles, res.data.article])
-    })
-    
+    // const token = localStorage.getItem("token");
+    // axios.create({ headers: { authorization: token } })
+      axiosWithAuth().post('http://localhost:9000/api/articles', article)
+      .then(res => {
+        setArticles([...articles, res.data.article])
+      })
+
 
     // + The flow is very similar to the `getArticles` function.
     // + You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
   }
-
-  const updateArticle = ({ article_id, art}) => {
+  const updateArticle = ( {article_id, article} ) => {
     // ✨ implement
-    const token = localStorage.getItem("token")
-    axios.create({headers:{authorization: token}})
-    .put(`http://localhost:9000/api/articles/${article_id}`, { "title": art.title, "text": art.text, "topic": art.topic })
+    console.log("This is the currentID ", article_id, "this is the art ", article)
+    axiosWithAuth().put(`http://localhost:9000/api/articles/${article_id}`, article)
     .then(res => {
-      setMessage(res.data.message);
-      setArticles(articles)
+      console.log(res.data)
     })
     .catch(err => console.log(err))
+
+
+
+
+    // const token = localStorage.getItem("token")
+    // axios.create({headers:{authorization: token}})
+    // .put(`http://localhost:9000/api/articles/${article_id}`, { "title": art.title, "text": art.text, "topic": art.topic })
+    // .then(res => {
+    //   setMessage(res.data.message);
+    //   setArticles(articles)
+    // })
+    // .catch(err => console.log(err))
     // You got this!
   }
 
@@ -130,26 +137,26 @@ export default function App() {
     // ✨ implement 
     const token = localStorage.getItem("token");
     axios.create({ headers: { authorization: token } })
-   .delete(`http://localhost:9000/api/articles/${article_id}`)
-    .then(res =>{
-      setMessage(res.data.message);
-      console.log(article_id) ;
-      const index = articles.findIndex((article)=>article.article_id === article_id)
-      const copyOfArticles = [...articles]
-      copyOfArticles.splice(index,1)
-      setArticles(copyOfArticles)
-      console.log(index)
-    })
-    .catch(err=> console.log(err))
+      .delete(`http://localhost:9000/api/articles/${article_id}`)
+      .then(res => {
+        setMessage(res.data.message);
+        console.log(article_id);
+        const index = articles.findIndex((article) => article.article_id === article_id)
+        const copyOfArticles = [...articles]
+        copyOfArticles.splice(index, 1)
+        setArticles(copyOfArticles)
+        console.log(index)
+      })
+      .catch(err => console.log(err))
   }
 
-//this deletearticle works! 
+  //this deletearticle works! 
 
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
-      <Spinner on={spinnerOn}  />
-      <Message message={message}/>
+      <Spinner on={spinnerOn} />
+      <Message message={message} />
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
         <h1>Advanced Web Applications</h1>
@@ -161,8 +168,17 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login} />} />
           <Route path="articles" element={
             <>
-              <ArticleForm updateArticle={updateArticle} deleteArticle={deleteArticle} postArticle={postArticle} setCurrentArticleId={setCurrentArticleId} currentArticleId={currentArticleId}/>
-              <Articles setCurrentArticleId={setCurrentArticleId} getArticles={getArticles} deleteArticle={deleteArticle} articles={articles} updateArticle={updateArticle}/>
+              <ArticleForm 
+              updateArticle={updateArticle} 
+              deleteArticle={deleteArticle} 
+              postArticle={postArticle} 
+              articles={articles} 
+              setCurrentArticleId={setCurrentArticleId} currentArticleId={currentArticleId} />
+              <Articles 
+              setCurrentArticleId={setCurrentArticleId} getArticles={getArticles} 
+              currentArticleId={currentArticleId} deleteArticle={deleteArticle} 
+              articles={articles} 
+              updateArticle={updateArticle} />
             </>
           } />
         </Routes>
