@@ -5,7 +5,7 @@ import axios from 'axios'
 import { memo } from 'react';
 
 export default function Articles(props) {
-  const { values, currentArticleId, setCurrentArticleId, updateArticle, deleteArticle, getArticles, articles, setMessage} = props
+  const { values, currentArticleId, setCurrentArticleId, updateArticle, deleteArticle, getArticles, articles,setValues, setMessage} = props
   // ✨ where are my props? Destructure them here
 
   // ✨ implement conditional logic: if no token exists
@@ -15,9 +15,10 @@ export default function Articles(props) {
 
   }
 
-  const handleEdit =(art)=> {
+  const handleEdit =(art, title, text, topic)=> {
     // setCurrentArticleId(art)
-    updateArticle(art, values)
+    setValues({...values, "title": title, "text": text, "topic": topic})
+    // updateArticle(art, values)
   }
   // const handleUpdate = (article_id, art) => {
   //   setCurrentArticleId(article_id)
@@ -48,7 +49,7 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={false} onClick={()=> handleEdit(art.article_id)}>Edit</button>
+                  <button disabled={false} onClick={()=> handleEdit(art.article_id, art.title, art.text, art.topic)}>Edit</button>
                   <button disabled={false} onClick={()=>handleDelete(art.article_id)}>Delete</button>
                 </div>
               </div>

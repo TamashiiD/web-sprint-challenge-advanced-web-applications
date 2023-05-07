@@ -31,7 +31,8 @@ export default function Protected(props){
                     articles={articles}
                     updateArticle={updateArticle}
                     values={values}
-                    setMessage={setMessage} />
+                    setMessage={setMessage} 
+                    setValues={setValues}/>
             </>
         )
     
