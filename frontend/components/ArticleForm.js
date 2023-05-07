@@ -4,12 +4,13 @@ import PT from 'prop-types'
 const initialFormValues = { title: '', text: '', topic: '' }
 
 export default function ArticleForm(props) {
-  const [values, setValues] = useState(initialFormValues)
-  const {articles, setCurrentArticleId, updateArticle, postArticle, currentArticleId} = props
+  // const [values, setValues] = useState(initialFormValues)
+  const {values, setValues, getArticles, articles, setCurrentArticleId, updateArticle, postArticle, currentArticleId} = props
   
   // ✨ where are my props? Destructure them here
 
   useEffect(() => {
+    
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
@@ -23,15 +24,16 @@ export default function ArticleForm(props) {
 
   const onSubmit = evt => {
     evt.preventDefault()
-    console.log("ON SUBMIT: ", evt)
     if (currentArticleId){
-      const data = {article_id : currentArticleId, article: values}
-       setValues(initialFormValues)
-       return updateArticle(data)
+      // const data = {article_id : currentArticleId, article: values}
+    //  updateArticle(currentArticleId, values) 
+    postArticle(values)
+     setValues(initialFormValues);
+       
     } 
     else {
-      setValues(initialFormValues)
-      postArticle(values)
+      setValues(initialFormValues);
+      postArticle(values);
     }
     
 

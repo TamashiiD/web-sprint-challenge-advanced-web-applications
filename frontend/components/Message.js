@@ -15,9 +15,10 @@ export default function Message(props) {
   const{ message} = props 
   return (
     <StyledMessage key={message} id="message">
+     
       Goodbye!  
-      Well done, Foo. Great article!
       Nice update, Foo!
+     
       {message}
     </StyledMessage>
   )

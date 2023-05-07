@@ -7,16 +7,20 @@ import ArticleForm from './ArticleForm'
 import Spinner from './Spinner'
 import axios from 'axios'
 import axiosWithAuth from '../axios'
+import Protected from './Protected'
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
+const initialFormValues = { title: '', text: '', topic: '' }
 
 export default function App() {
   // ✨ MVP can be achieved with these states
+  const [values, setValues] = useState(initialFormValues)
   const [message, setMessage] = useState('')
   const [articles, setArticles] = useState([])
   const [currentArticleId, setCurrentArticleId] = useState()
   const [spinnerOn, setSpinnerOn] = useState(false)
+
 
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
@@ -25,7 +29,7 @@ export default function App() {
     /* ✨ implement */
   }
   const redirectToArticles = () => {
-
+navigate("articles")
 
     /* ✨ implement */
   }
@@ -100,24 +104,32 @@ export default function App() {
     // ✨ implementconst 
     // const token = localStorage.getItem("token");
     // axios.create({ headers: { authorization: token } })
-      axiosWithAuth().post('http://localhost:9000/api/articles', article)
+    axiosWithAuth().post('http://localhost:9000/api/articles', article)
       .then(res => {
+        setMessage(res.data.message)
         setArticles([...articles, res.data.article])
+      })
+      .catch(err=>{
+        console.log(err)
       })
 
 
+      
     // + The flow is very similar to the `getArticles` function.
     // + You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
   }
-  const updateArticle = ( {article_id, article} ) => {
+  const updateArticle = (art, values) => {
     // ✨ implement
-    console.log("This is the currentID ", article_id, "this is the art ", article)
-    axiosWithAuth().put(`http://localhost:9000/api/articles/${article_id}`, article)
-    .then(res => {
-      console.log(res.data)
-    })
-    .catch(err => console.log(err))
+    console.log(values)
+
+    axiosWithAuth().put(`http://localhost:9000/api/articles/${art}`, values)
+      .then(res => {
+        setMessage(res.data.message);
+        setValues(initialFormValues);
+        getArticles()      
+})
+      .catch(err => console.log(err))
 
 
 
@@ -145,7 +157,6 @@ export default function App() {
         const copyOfArticles = [...articles]
         copyOfArticles.splice(index, 1)
         setArticles(copyOfArticles)
-        console.log(index)
       })
       .catch(err => console.log(err))
   }
@@ -167,19 +178,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LoginForm login={login} />} />
           <Route path="articles" element={
-            <>
-              <ArticleForm 
-              updateArticle={updateArticle} 
-              deleteArticle={deleteArticle} 
-              postArticle={postArticle} 
-              articles={articles} 
-              setCurrentArticleId={setCurrentArticleId} currentArticleId={currentArticleId} />
-              <Articles 
-              setCurrentArticleId={setCurrentArticleId} getArticles={getArticles} 
-              currentArticleId={currentArticleId} deleteArticle={deleteArticle} 
-              articles={articles} 
-              updateArticle={updateArticle} />
-            </>
+            <Protected
+            getArticles={getArticles} updateArticle={updateArticle} postArticle={postArticle} articles={articles} setCurrentArticleId={setCurrentArticleId} deleteArticle={deleteArticle} currentArticleId={currentArticleId} values={values} setValues={setValues} setMessage={setMessage}/>
+              
           } />
         </Routes>
         <footer>Bloom Institute of Technology 2022</footer>
